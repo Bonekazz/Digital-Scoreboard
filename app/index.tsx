@@ -7,6 +7,9 @@ export default function Index() {
     const [orientation, setOrientation] = useState("");
 
     useEffect(() => {
+        const {width, height} = Dimensions.get("window");
+        setOrientation(width > height ? "landscape" : "portrait");
+
         Dimensions.addEventListener("change", ({window: {width, height}}) => {
             setOrientation(width > height ? "landscape" : "portrait");
         })
@@ -47,7 +50,10 @@ export default function Index() {
         <Pressable 
             style={style.restartBtn}
             onPress={() => {
-                setTeams
+                setTeams({
+                    blueSide: {...teams.blueSide, score: 0},
+                    redSide: {...teams.redSide, score: 0},
+                });
             }}
         >
             <MaterialCommunityIcons name="restart" size={42} color="black" /> 
