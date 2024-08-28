@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArrowDown, ArrowUp, RefreshCw } from 'lucide-react';
 
 // import './App.css'
@@ -11,10 +11,26 @@ function App() {
       bgColor: "rgba(238, 0, 0, 0.8)",
     },
     blueSide: {
-      score: 12,
+      score: 0,
       bgColor: "rgba(0, 27, 238, 0.8)",
     }
   });
+
+  const [isPortrait, setIsPortrait] = useState(window.matchMedia("(orientation: portrait)").matches);
+
+  useEffect(() => {
+    function handleOrientationChange(e: any) {
+      setIsPortrait(e.matches);
+    }
+
+    const portraitMediaQuery = window.matchMedia("(orientation: portrait)");
+    portraitMediaQuery.addEventListener('change', handleOrientationChange);
+
+    return () => {
+      portraitMediaQuery.removeEventListener('change', handleOrientationChange);
+    }
+
+  }, []);
 
   function restartScore() {
     setTeams({
@@ -24,7 +40,7 @@ function App() {
   }
 
   return (
-    <div className="flex justify-center items-center w-[100dvw] h-[100dvh] overflow-hidden">
+    <div className={`flex ${(isPortrait) ? "flex-col" : ""} justify-center items-center w-[100dvw] h-[100dvh] overflow-hidden`}>
 
       <div 
         id="redSide" 
