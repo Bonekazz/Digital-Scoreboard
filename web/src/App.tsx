@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ArrowDown, ArrowUp, RefreshCw } from 'lucide-react';
+import Install from './components/InstallModal';
+import Sheet from './components/Sheet';
 
 // import './App.css'
 
@@ -18,6 +20,9 @@ function App() {
 
   const [isPortrait, setIsPortrait] = useState(window.matchMedia("(orientation: portrait)").matches);
 
+  const [isMobile, setIsMobile] = useState(false);
+  const [hasInstalled, setHasInstalled] = useState(false);
+
   useEffect(() => {
     function handleOrientationChange(e: any) {
       setIsPortrait(e.matches);
@@ -25,6 +30,12 @@ function App() {
 
     const portraitMediaQuery = window.matchMedia("(orientation: portrait)");
     portraitMediaQuery.addEventListener('change', handleOrientationChange);
+
+    const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    setIsMobile(isMobileDevice);
+
+    const data = localStorage.getItem("isPWAInstalled");
+    if (data) setHasInstalled(JSON.parse(data));
 
     return () => {
       portraitMediaQuery.removeEventListener('change', handleOrientationChange);
@@ -41,6 +52,12 @@ function App() {
 
   return (
     <div className={`flex ${(isPortrait) ? "flex-col" : ""} justify-center items-center w-[100dvw] h-[100dvh] overflow-hidden`}>
+      
+    {isMobile && !hasInstalled && (
+      <Sheet open={true}>
+        <Install />
+      </Sheet>
+    )}
 
       <div 
         id="redSide" 
@@ -49,7 +66,7 @@ function App() {
       >
         <div className="w-full h-full">
           <div 
-            className="z-[1000] w-full h-[50%] bg-[rgba(0,0,0,0.24)] flex items-end pl-3 pb-3 transition-all ease-out duration-300 active:bg-white/15"
+            className="z-[10] w-full h-[50%] bg-[rgba(0,0,0,0.24)] flex items-end pl-3 pb-3 transition-all ease-out duration-300 active:bg-white/15"
             onClick={() => {
               setTeams({blueSide: {...teams.blueSide}, redSide: {...teams.redSide, score: teams.redSide.score + 1}})}
             }
@@ -57,7 +74,7 @@ function App() {
             <ArrowUp strokeWidth={3} size={40} color="white" style={{opacity: 0.5}}/>
           </div> 
           <div 
-            className="z-[1000] w-full h-[50%] bg-[rgba(0,0,0,0.12)] flex items-start pl-3 pt-3 transition-all ease-out duration-300 active:bg-white/15"
+            className="z-[10] w-full h-[50%] bg-[rgba(0,0,0,0.12)] flex items-start pl-3 pt-3 transition-all ease-out duration-300 active:bg-white/15"
             onClick={() => {
               setTeams({blueSide: {...teams.blueSide}, redSide: {...teams.redSide, score: (teams.redSide.score === 0) ? 0 : teams.redSide.score - 1}})}
             }
@@ -76,7 +93,7 @@ function App() {
       >
         <div className="w-full h-full">
           <div 
-            className="z-[1000] w-full h-[50%] bg-[rgba(0,0,0,0.24)] flex items-end justify-end pr-3 pb-3 transition-all ease-out duration-300 active:bg-white/15"
+            className="z-[10] w-full h-[50%] bg-[rgba(0,0,0,0.24)] flex items-end justify-end pr-3 pb-3 transition-all ease-out duration-300 active:bg-white/15"
             onClick={() => {
               setTeams({redSide: {...teams.redSide}, blueSide: {...teams.blueSide, score: teams.blueSide.score + 1}})}
             }
@@ -84,7 +101,7 @@ function App() {
             <ArrowUp strokeWidth={3} size={40} color="white" style={{opacity: 0.5}}/>
           </div> 
           <div 
-            className="z-[1000] w-full h-[50%] bg-[rgba(0,0,0,0.12)] flex items-start justify-end pr-3 pt-3 transition-all ease-out duration-300 active:bg-white/15"
+            className="z-[10] w-full h-[50%] bg-[rgba(0,0,0,0.12)] flex items-start justify-end pr-3 pt-3 transition-all ease-out duration-300 active:bg-white/15"
             onClick={() => {
               setTeams({redSide: {...teams.redSide}, blueSide: {...teams.blueSide, score: (teams.blueSide.score === 0) ? 0 : teams.blueSide.score - 1}})}
             }
@@ -99,7 +116,7 @@ function App() {
       <div 
         id="restart-btn-div" 
         className="
-          absolute z-[2000] flex justify-center items-center bg-[rgba(0,0,0,0.21)] p-[12px] rounded-full border border-white/5 
+          absolute z-[20] flex justify-center items-center bg-[rgba(0,0,0,0.21)] p-[12px] rounded-full border border-white/5 
           transition-all ease-in-out duration-300 active:scale-90 active:bg-white/15
         "
         onClick={() => {restartScore()}}
