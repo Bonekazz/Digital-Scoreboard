@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { ArrowDown, ArrowUp, RefreshCw } from 'lucide-react';
-import Install from './components/InstallModal';
+import InstallPWA from './components/InstallModal';
 import Sheet from './components/Sheet';
+import { BeforeInstallPromptEvent } from './types/PWAPrompt';
 
 // import './App.css'
 
@@ -21,11 +22,17 @@ function App() {
   const [isPortrait, setIsPortrait] = useState(window.matchMedia("(orientation: portrait)").matches);
 
   const [isMobile, setIsMobile] = useState(false);
-  const [hasInstalled, setHasInstalled] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
     function handleOrientationChange(e: any) {
       setIsPortrait(e.matches);
+    }
+
+    function handleBeforeInstallPrompt(e: Event) {
+      console.log(e);
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
     }
 
     const portraitMediaQuery = window.matchMedia("(orientation: portrait)");
@@ -34,11 +41,12 @@ function App() {
     const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     setIsMobile(isMobileDevice);
 
-    const data = localStorage.getItem("isPWAInstalled");
-    if (data) setHasInstalled(JSON.parse(data));
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
     return () => {
       portraitMediaQuery.removeEventListener('change', handleOrientationChange);
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     }
 
   }, []);
@@ -53,11 +61,12 @@ function App() {
   return (
     <div className={`flex ${(isPortrait) ? "flex-col" : ""} justify-center items-center w-[100dvw] h-[100dvh] overflow-hidden`}>
       
-    {isMobile && !hasInstalled && (
+    {deferredPrompt && (
       <Sheet open={true}>
-        <Install />
+        <InstallPWA />
       </Sheet>
     )}
+    
 
       <div 
         id="redSide" 

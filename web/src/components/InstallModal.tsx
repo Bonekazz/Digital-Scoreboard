@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { SheetContext } from "./Sheet";
-import InstallPWAButton from "@/hooks/usePWAInstallPrompt";
 
-export default function Install() {
+
+
+export default function InstallPWA() {
   const context = useContext(SheetContext);
 
   return (
@@ -22,7 +23,7 @@ export default function Install() {
           >
             continuar no navegador
           </button>
-          <InstallPWAButton
+          <button
             className="
               border px-4 py-2 rounded-full bg-blue-700 text-white font-semibold
               transition-all ease-in-out active:scale-95
@@ -32,7 +33,7 @@ export default function Install() {
             }}
           >
             instalar
-          </InstallPWAButton>
+          </button>
         </div>
       </div>
     </div>
