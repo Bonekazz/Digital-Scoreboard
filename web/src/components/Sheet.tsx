@@ -1,6 +1,9 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 
-export const SheetContext = createContext<{ isOpen: boolean, toggleSheet: (value?: boolean) => void } | null >(null);
+export const SheetContext = createContext<{ 
+  isOpen: boolean, toggleSheet: (value?: boolean) => void,
+  setViewPercentage: React.Dispatch<number>
+  } | null >(null);
 
 interface SheetProviderProps {
   children: ReactNode;
@@ -11,14 +14,17 @@ interface SheetProviderProps {
 function SheetProvider({ children, open }: SheetProviderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isFadingIn, setIsFadingIn] = useState(false);
+  const [viewPercentage, setViewPercentage] = useState(45);
 
   const DISPLAY_DURATION = 700;
-  const SHEET_DURATION = 500;
+  // const SHEET_DURATION = 500;
 
   useEffect(() => {
-    if (open) {
+    if (open !== undefined && open) {
       setIsOpen(true);
-      setIsFadingIn(true);
+      setTimeout(() => {
+        setIsFadingIn(true);
+      }, 1000);
     };
   },[])
 
@@ -35,7 +41,7 @@ function SheetProvider({ children, open }: SheetProviderProps) {
     setIsOpen(value);
   }
   return (
-    <SheetContext.Provider value={{ isOpen,  toggleSheet}}>
+    <SheetContext.Provider value={{ isOpen,  toggleSheet, setViewPercentage}}>
       <div 
       className={`
         ${isOpen ? "" : "hidden"}
@@ -54,10 +60,13 @@ function SheetProvider({ children, open }: SheetProviderProps) {
         <div className="z-[1001] absolute top-0 w-full h-full flex items-end">
           <div 
             className={`
-              w-full ${isFadingIn ? "h-[40%]" : "h-[0%]"} bg-white
+              w-full bg-white
               rounded-t-3xl
               transition-all ease-in-out duration-300
             `}
+            style={{
+              height: (isFadingIn) ? `${viewPercentage}%` : "0%" 
+            }}
           >
             {children}
           </div>
@@ -68,9 +77,3 @@ function SheetProvider({ children, open }: SheetProviderProps) {
 }
 
 export default SheetProvider;
-
-/** 
-export function Sheet({children}: {children: ReactNode}) {
-  return <SheetProvider>{children}</SheetProvider>;
-}
-**/

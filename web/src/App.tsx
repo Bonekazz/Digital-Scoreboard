@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ArrowDown, ArrowUp, RefreshCw } from 'lucide-react';
-import InstallPWA from './components/InstallModal';
+import InstallPWA from './components/InstallPWA';
 import Sheet from './components/Sheet';
-import { BeforeInstallPromptEvent } from './types/PWAPrompt';
 
 // import './App.css'
 
@@ -20,19 +19,12 @@ function App() {
   });
 
   const [isPortrait, setIsPortrait] = useState(window.matchMedia("(orientation: portrait)").matches);
-
   const [isMobile, setIsMobile] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [hasSeenInstallModal, setHasSeenInstallModal] = useState(false);
 
   useEffect(() => {
     function handleOrientationChange(e: any) {
       setIsPortrait(e.matches);
-    }
-
-    function handleBeforeInstallPrompt(e: Event) {
-      console.log(e);
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
     }
 
     const portraitMediaQuery = window.matchMedia("(orientation: portrait)");
@@ -41,12 +33,11 @@ function App() {
     const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     setIsMobile(isMobileDevice);
 
-
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    if (localStorage.getItem("hasSeenInstallModal")) 
+      setHasSeenInstallModal(JSON.parse(localStorage.getItem("hasSeenInstallModal") as string))
 
     return () => {
       portraitMediaQuery.removeEventListener('change', handleOrientationChange);
-      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     }
 
   }, []);
@@ -61,12 +52,11 @@ function App() {
   return (
     <div className={`flex ${(isPortrait) ? "flex-col" : ""} justify-center items-center w-[100dvw] h-[100dvh] overflow-hidden`}>
       
-    {deferredPrompt && (
-      <Sheet open={true}>
-        <InstallPWA />
-      </Sheet>
-    )}
-    
+      {isMobile && !hasSeenInstallModal && (
+        <Sheet open={true}>
+          <InstallPWA />
+        </Sheet>
+      )}
 
       <div 
         id="redSide" 
