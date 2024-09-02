@@ -1,5 +1,4 @@
 {
-  "name": "web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fortawesome/react-fontawesome": "^0.2.2",
     "lucide-react": "^0.436.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
