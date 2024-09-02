@@ -13,6 +13,7 @@ export default function InstallPWA() {
   useEffect(() => {
     setOS(getUserMobileOS());
     function handlePromptEvent(e: Event) {
+      console.log(e);
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     }
