@@ -14,9 +14,9 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,png,svg,ico}"]
       },
       manifest: {
-        name: "Volley Scoreboard",
-        short_name: "VolleyScoreboard",
-        description: "A digital scoreboard for your volley match",
+        name: "Placar Digital",
+        short_name: "PlacarDigital",
+        description: "Placar digital para contagem de pontos.",
         display: "standalone",
         scope: "/",
         start_url: "/",
